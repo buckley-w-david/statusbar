@@ -27,8 +27,15 @@ lazy_static! {
     });
 }
 
+// NOTE: Presumably as more resource related blocks are implemented, they will also all use results
+// from reading the /proc/stat file. It would be nice if I could somehow cache the result of
+// reading and parsing it each iteration and allow each block to use the cached version.
+// This would introduce complexity when update intervals are implemented.
+
 impl block::Block for CpuBlock {
     fn perform(&self) -> Result<String, Box<dyn Error>> {
+        // Do I really need a dependency just to read and parse the /proc/stat file?
+        // TODO: Think about doing that myself
         let proc_stat = ProcStat::read();
         let cpu = proc_stat.cpu;
 
@@ -62,4 +69,4 @@ impl block::Block for CpuBlock {
     }
 }
 
-// TODO: Other system-resource type measures like memory,
+// TODO: Other system-resource type measures like memory
