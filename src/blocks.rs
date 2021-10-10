@@ -49,7 +49,7 @@ pub const BLOCKS: &'static [&'static StatusBlock] = &[
     },
     &StatusBlock {
         block: &date::DateBlock {
-            format: "%a %b %_d %l:%M",
+            format: "%a %b %e %l:%M",
         },
         template: "{content}",
         name: "date",

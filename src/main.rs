@@ -50,18 +50,23 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             .unwrap();
     }
 
+    let mut old_status: String = String::new();
     loop {
-        let status = build_status(blocks::BLOCKS, &tt);
-        println!("{}", status);
-        conn.change_property8(
-            PropMode::REPLACE,
-            screen.root,
-            AtomEnum::WM_NAME,
-            AtomEnum::STRING,
-            status.as_bytes(),
-        )
-        .unwrap();
-        conn.flush().unwrap();
+        let new_status = build_status(blocks::BLOCKS, &tt);
+        // Only set the root WM_NAME if the status text has changed
+        if old_status != new_status {
+            conn.change_property8(
+                PropMode::REPLACE,
+                screen.root,
+                AtomEnum::WM_NAME,
+                AtomEnum::STRING,
+                new_status.as_bytes(),
+            )
+            .unwrap();
+            conn.flush().unwrap();
+            old_status = new_status;
+        }
+
         thread::sleep(time::Duration::from_secs(1));
     }
 }
