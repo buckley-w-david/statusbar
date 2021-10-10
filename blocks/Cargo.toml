@@ -1,0 +1,11 @@
+[workspace]
+
+members = [
+    "block",
+    "cpu",
+    "date",
+    "file",
+    "volume",
+    "sh",
+    "system-resources",
+]
