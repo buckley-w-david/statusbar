@@ -2,7 +2,7 @@ use std::error::Error;
 use std::fs;
 
 pub struct FileBlock<'a> {
-    pub file_path : &'a str
+    pub file_path: &'a str,
 }
 
 impl block::Block for FileBlock<'_> {

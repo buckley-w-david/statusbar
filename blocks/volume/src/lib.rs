@@ -4,7 +4,7 @@ use pulsectl::controllers::DeviceControl;
 use pulsectl::controllers::SinkController;
 
 pub struct PulseVolumeBlock {
-    pub average: bool
+    pub average: bool,
 }
 
 impl block::Block for PulseVolumeBlock {
@@ -22,6 +22,5 @@ impl block::Block for PulseVolumeBlock {
             // compliced
             Ok(format!("{}", default.volume))
         }
-
     }
 }

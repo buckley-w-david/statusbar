@@ -10,15 +10,15 @@ pub const ERROR: &str = "Error...";
 /// A block of output that will appear in the status bar
 pub struct StatusBlock<'a> {
     /// A StatusBlock uses a Block to produce the dynamic output by calling the `perform` function
-    pub block : &'a dyn block::Block,
+    pub block: &'a dyn block::Block,
     /// A template specifies how a StatusBlock should be rendered in the bar
     /// Use {left} for the left hand separator
     /// Use {right} for the right hand separator
     /// Use {content} for the output of the block
-    pub template : &'a str,
+    pub template: &'a str,
     /// The block name
     /// Each StatusBlock must be given a unique name within BLOCKS for templating to work correctly
-    pub name : &'a str,
+    pub name: &'a str,
 }
 
 /// Slice of StatusBlocks to appear in the status bar
@@ -43,15 +43,13 @@ pub const BLOCKS: &'static [&'static StatusBlock] = &[
         name: "cpu",
     },
     &StatusBlock {
-        block: &volume::PulseVolumeBlock {
-            average: true,
-        },
+        block: &volume::PulseVolumeBlock { average: true },
         template: "{content}%",
         name: "volume",
     },
     &StatusBlock {
         block: &date::DateBlock {
-            format: "%a %b %_d %l:%M"
+            format: "%a %b %_d %l:%M",
         },
         template: "{content}",
         name: "date",

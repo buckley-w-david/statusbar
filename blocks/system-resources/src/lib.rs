@@ -31,7 +31,12 @@ impl block::Block for CpuBlock {
         // Maybe some mechanism of feeding previous results back into blocks?
         unsafe {
             PREVIOUS_IDLE = PREVIOUS_CPU.idle + PREVIOUS_CPU.iowait;
-            PREVIOUS_NON_IDLE = PREVIOUS_CPU.user + PREVIOUS_CPU.nice + PREVIOUS_CPU.system + PREVIOUS_CPU.irq + PREVIOUS_CPU.softirq + PREVIOUS_CPU.steal;
+            PREVIOUS_NON_IDLE = PREVIOUS_CPU.user
+                + PREVIOUS_CPU.nice
+                + PREVIOUS_CPU.system
+                + PREVIOUS_CPU.irq
+                + PREVIOUS_CPU.softirq
+                + PREVIOUS_CPU.steal;
             PREVIOUS_TOTAL = PREVIOUS_IDLE + PREVIOUS_NON_IDLE;
         }
 
@@ -43,7 +48,10 @@ impl block::Block for CpuBlock {
             PREVIOUS_CPU = cpu;
             let totald = total - PREVIOUS_TOTAL;
             let idled = idle - PREVIOUS_IDLE;
-            Ok(format!("{:.2}", 100.0 * (totald - idled) as f64 / totald as f64))
+            Ok(format!(
+                "{:.2}",
+                100.0 * (totald - idled) as f64 / totald as f64
+            ))
         }
     }
 }

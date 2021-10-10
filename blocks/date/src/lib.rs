@@ -3,7 +3,7 @@ use std::error::Error;
 use chrono;
 
 pub struct DateBlock<'a> {
-    pub format : &'a str
+    pub format: &'a str,
 }
 
 impl block::Block for DateBlock<'_> {
