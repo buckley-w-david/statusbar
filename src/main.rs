@@ -18,7 +18,7 @@ pub struct BlockOutput<'a> {
 }
 
 // FIXME: There sure are a lot of `unwrap`s in here, might want to do something about that
-fn build_status(blocks: &'static [&'static blocks::StatusBlock], tt: &TinyTemplate) -> String {
+fn build_status(blocks: &[&blocks::StatusBlock], tt: &TinyTemplate) -> String {
     blocks
         .into_iter()
         .map(|b| {
