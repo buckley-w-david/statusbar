@@ -2,6 +2,8 @@
 
 Statusbar for window managers that use the root windows `WM_TITLE`.
 
+Inspired by [dwmblocks](https://github.com/torrinfail/dwmblocks)
+
 ## Usage
 
 Configuration is done via editing the [src/blocks.rs](src/blocks.rs) file and compiling with `cargo build`.

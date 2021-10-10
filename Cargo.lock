@@ -234,13 +234,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "sh"
-version = "0.1.0"
-dependencies = [
- "block",
-]
-
-[[package]]
 name = "statusbar"
 version = "0.1.0"
 dependencies = [
@@ -248,7 +241,6 @@ dependencies = [
  "date",
  "file",
  "serde",
- "sh",
  "system-resources",
  "tinytemplate",
  "volume",

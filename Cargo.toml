@@ -14,4 +14,3 @@ system-resources = { path = "blocks/system-resources" }
 date = { path = "blocks/date" }
 file = { path = "blocks/file" }
 volume = { path = "blocks/volume" }
-sh = { path = "blocks/sh" }

@@ -43,10 +43,10 @@ pub const BLOCKS: &'static [&'static StatusBlock] = &[
         name: "cpu",
     },
     &StatusBlock {
-        block: &volume::VolumeBlock {
+        block: &volume::PulseVolumeBlock {
             average: true,
         },
-        template: "{content}",
+        template: "{content}%",
         name: "volume",
     },
     &StatusBlock {

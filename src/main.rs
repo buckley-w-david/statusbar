@@ -38,7 +38,7 @@ fn build_status(blocks: &'static [&'static blocks::StatusBlock], tt: &TinyTempla
         .join(blocks::SEPARATOR)
 }
 
-// TODO: loop and schedule block invocations
+// TODO: per block update interval
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let (conn, screen_num) = x11rb::connect(None).unwrap();
 
