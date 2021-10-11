@@ -1,24 +1,31 @@
-use std::sync::atomic::{AtomicU64, Ordering};
-
 use std::error::Error;
+use std::fmt;
+use std::sync::atomic::{AtomicU64, Ordering};
 
 use procstat::ProcStat;
 
 pub struct CpuResource;
 
-// TODO replace with atomic primitives
-// https://doc.rust-lang.org/std/sync/atomic/index.html
-static PREVIOUS_TOTAL: AtomicU64 = AtomicU64::new(0);
-static PREVIOUS_IDLE: AtomicU64 = AtomicU64::new(0);
-static PREVIOUS_NON_IDLE: AtomicU64 = AtomicU64::new(0);
-static PREVIOUS_CPU_USER: AtomicU64 = AtomicU64::new(0);
-static PREVIOUS_CPU_NICE: AtomicU64 = AtomicU64::new(0);
-static PREVIOUS_CPU_SYSTEM: AtomicU64 = AtomicU64::new(0);
-static PREVIOUS_CPU_IRQ: AtomicU64 = AtomicU64::new(0);
-static PREVIOUS_CPU_SOFTIRQ: AtomicU64 = AtomicU64::new(0);
-static PREVIOUS_CPU_STEAL: AtomicU64 = AtomicU64::new(0);
-static PREVIOUS_CPU_IOWAIT: AtomicU64 = AtomicU64::new(0);
-static PREVIOUS_CPU_IDLE: AtomicU64 = AtomicU64::new(0);
+#[derive(Debug)]
+struct CpuError(String);
+
+impl fmt::Display for CpuError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "There is an error: {}", self.0)
+    }
+}
+
+impl Error for CpuError {}
+
+static PREVIOUS_CPU: [AtomicU64; 7] = [
+    AtomicU64::new(0),
+    AtomicU64::new(0),
+    AtomicU64::new(0),
+    AtomicU64::new(0),
+    AtomicU64::new(0),
+    AtomicU64::new(0),
+    AtomicU64::new(0),
+];
 
 // NOTE: Presumably as more resource related blocks are implemented, they will also all use results
 // from reading the /proc/stat file. It would be nice if I could somehow cache the result of
@@ -32,52 +39,38 @@ impl resource::Resource for CpuResource {
         let proc_stat = ProcStat::read();
         let cpu = proc_stat.cpu;
 
-        // This algorithm is from: https://stackoverflow.com/a/23376195/14470574
-        // Would be be nice if I had a better method than the store/load AtomicU64 stuff.
-        // I like it better than the mutex version I guess, it's just very verbose.
-        let previous_cpu_idle = PREVIOUS_CPU_IDLE.load(Ordering::Relaxed);
-        let previous_cpu_iowait = PREVIOUS_CPU_IOWAIT.load(Ordering::Relaxed);
+        // Algorithm for determining percentage from slstatus
+        // https://git.suckless.org/slstatus/file/components/cpu.c.html
+        let b = PREVIOUS_CPU[0..7]
+            .iter()
+            .map(|i| i.load(Ordering::Relaxed))
+            .sum::<u64>() as i64;
 
-        let previous_idle = previous_cpu_idle + previous_cpu_iowait;
-        PREVIOUS_IDLE.store(previous_idle, Ordering::Relaxed);
+        let a = (cpu.user + cpu.nice + cpu.system + cpu.idle + cpu.iowait + cpu.irq + cpu.softirq)
+            as i64;
 
-        let previous_cpu_user = PREVIOUS_CPU_USER.load(Ordering::Relaxed);
-        let previous_cpu_nice = PREVIOUS_CPU_NICE.load(Ordering::Relaxed);
-        let previous_cpu_system = PREVIOUS_CPU_SYSTEM.load(Ordering::Relaxed);
-        let previous_cpu_irq = PREVIOUS_CPU_IRQ.load(Ordering::Relaxed);
-        let previous_cpu_softirq = PREVIOUS_CPU_SOFTIRQ.load(Ordering::Relaxed);
-        let previous_cpu_steal = PREVIOUS_CPU_STEAL.load(Ordering::Relaxed);
+        let sum = b - a;
+        if sum == 0 {
+            return Err(Box::new(CpuError("Oops".into())));
+        }
 
-        let previous_non_idle = previous_cpu_user
-            + previous_cpu_nice
-            + previous_cpu_system
-            + previous_cpu_irq
-            + previous_cpu_softirq
-            + previous_cpu_steal;
-        PREVIOUS_NON_IDLE.store(previous_non_idle, Ordering::Relaxed);
+        let b = (PREVIOUS_CPU[0].load(Ordering::Relaxed)
+            + PREVIOUS_CPU[1].load(Ordering::Relaxed)
+            + PREVIOUS_CPU[2].load(Ordering::Relaxed)
+            + PREVIOUS_CPU[5].load(Ordering::Relaxed)
+            + PREVIOUS_CPU[6].load(Ordering::Relaxed)) as f64;
 
-        let previous_total = previous_idle + previous_non_idle;
-        PREVIOUS_TOTAL.store(previous_total, Ordering::Relaxed);
+        let a = (cpu.user + cpu.nice + cpu.system + cpu.irq + cpu.softirq) as f64;
 
-        let idle = cpu.idle + cpu.iowait;
-        let non_idle = cpu.user + cpu.nice + cpu.system + cpu.irq + cpu.softirq + cpu.steal;
-        let total = idle + non_idle;
+        PREVIOUS_CPU[0].store(cpu.user, Ordering::Relaxed);
+        PREVIOUS_CPU[1].store(cpu.nice, Ordering::Relaxed);
+        PREVIOUS_CPU[2].store(cpu.system, Ordering::Relaxed);
+        PREVIOUS_CPU[3].store(cpu.idle, Ordering::Relaxed);
+        PREVIOUS_CPU[4].store(cpu.iowait, Ordering::Relaxed);
+        PREVIOUS_CPU[5].store(cpu.irq, Ordering::Relaxed);
+        PREVIOUS_CPU[6].store(cpu.softirq, Ordering::Relaxed);
 
-        PREVIOUS_CPU_IDLE.store(cpu.idle, Ordering::Relaxed);
-        PREVIOUS_CPU_IOWAIT.store(cpu.iowait, Ordering::Relaxed);
-        PREVIOUS_CPU_USER.store(cpu.user, Ordering::Relaxed);
-        PREVIOUS_CPU_NICE.store(cpu.nice, Ordering::Relaxed);
-        PREVIOUS_CPU_SYSTEM.store(cpu.system, Ordering::Relaxed);
-        PREVIOUS_CPU_IRQ.store(cpu.irq, Ordering::Relaxed);
-        PREVIOUS_CPU_SOFTIRQ.store(cpu.softirq, Ordering::Relaxed);
-        PREVIOUS_CPU_STEAL.store(cpu.steal, Ordering::Relaxed);
-
-        let totald = total - previous_total;
-        let idled = idle - previous_idle;
-        Ok(format!(
-            "{:.2}",
-            100.0 * (totald - idled) as f64 / totald as f64
-        ))
+        Ok(format!("{:.2}", 100.0 * (b - a) / (sum as f64)))
     }
 }
 
