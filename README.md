@@ -2,7 +2,10 @@
 
 Statusbar for window managers that use the root windows `WM_TITLE`.
 
-Inspired by [dwmblocks](https://github.com/torrinfail/dwmblocks)
+Inspired by:
+ - [dwmblocks](https://github.com/torrinfail/dwmblocks)
+ - [dwm-bar](https://github.com/joestandring/dwm-bar)
+ - [slstatus](https://git.suckless.org/slstatus)
 
 ## Usage
 
