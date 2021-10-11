@@ -1,6 +1,6 @@
 mod blocks;
 
-use std::{thread, time};
+use std::{thread, time::Instant};
 
 use x11rb::connection::Connection;
 use x11rb::protocol::xproto::*;
@@ -38,7 +38,6 @@ fn build_status(blocks: &[&blocks::StatusBlock], tt: &TinyTemplate) -> String {
         .join(blocks::SEPARATOR)
 }
 
-// TODO: per block update interval
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let (conn, screen_num) = x11rb::connect(None).unwrap();
 
@@ -52,6 +51,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let mut old_status: String = String::new();
     loop {
+        let start = Instant::now();
         let new_status = build_status(blocks::BLOCKS, &tt);
         // Only set the root WM_NAME if the status text has changed
         if old_status != new_status {
@@ -67,6 +67,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             old_status = new_status;
         }
 
-        thread::sleep(time::Duration::from_secs(1));
+        let elapsed = start.elapsed();
+        if elapsed < blocks::INTERVAL {
+            thread::sleep(blocks::INTERVAL - elapsed);
+        }
     }
 }

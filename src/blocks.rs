@@ -1,3 +1,4 @@
+use std::time::Duration;
 /// Left hand block separator
 pub const LEFT: &str = "[";
 /// right hand block separator
@@ -6,6 +7,10 @@ pub const RIGHT: &str = "]";
 pub const SEPARATOR: &str = " | ";
 /// Element used when a block fails
 pub const ERROR: &str = "Error...";
+/// Duration between updates
+/// statusbar will attempt to compensate for slow update loops by sleeping for a smaller duration
+/// based on how long an update actually took
+pub const INTERVAL: Duration = Duration::from_millis(1000);
 
 /// A block of output that will appear in the status bar
 pub struct StatusBlock<'a> {
@@ -22,7 +27,7 @@ pub struct StatusBlock<'a> {
 }
 
 /// Slice of StatusBlocks to appear in the status bar
-pub const BLOCKS: &'static [&'static StatusBlock] = &[
+pub const BLOCKS: &[&StatusBlock] = &[
     &StatusBlock {
         resource: &file::FileResource {
             file_path: "/home/david/.local/share/infod/mnt/rss",
