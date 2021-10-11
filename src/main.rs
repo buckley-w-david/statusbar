@@ -38,6 +38,7 @@ fn build_status(blocks: &[&blocks::StatusBlock], tt: &TinyTemplate) -> String {
         .join(blocks::SEPARATOR)
 }
 
+// TODO: Multithreading? Sounds like a lot of work
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let (conn, screen_num) = x11rb::connect(None).unwrap();
 
