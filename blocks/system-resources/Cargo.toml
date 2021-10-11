@@ -9,4 +9,3 @@ edition = "2018"
 [dependencies]
 block = { path = "../block" }
 procstat = "1.0.4"
-lazy_static = "1.4.0"
