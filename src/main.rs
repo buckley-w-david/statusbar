@@ -17,7 +17,6 @@ pub struct BlockOutput<'a> {
     pub right: &'a str,
 }
 
-// FIXME: There sure are a lot of `unwrap`s in here, might want to do something about that
 fn build_status(blocks: &[&blocks::StatusBlock], tt: &TinyTemplate) -> String {
     blocks
         .into_iter()
@@ -32,7 +31,10 @@ fn build_status(blocks: &[&blocks::StatusBlock], tt: &TinyTemplate) -> String {
                 content: content,
                 right: blocks::RIGHT,
             };
-            tt.render(b.name, &out).unwrap()
+            match tt.render(b.name, &out) {
+                Ok(s) => s,
+                Err(_) => blocks::ERROR.to_string(), // TODO: logging?
+            }
         })
         .collect::<Vec<String>>()
         .join(blocks::SEPARATOR)
@@ -40,14 +42,13 @@ fn build_status(blocks: &[&blocks::StatusBlock], tt: &TinyTemplate) -> String {
 
 // TODO: Multithreading? Sounds like a lot of work
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let (conn, screen_num) = x11rb::connect(None).unwrap();
+    let (conn, screen_num) = x11rb::connect(None)?;
 
     let screen = &conn.setup().roots[screen_num];
 
     let mut tt = TinyTemplate::new();
     for &status_block in blocks::BLOCKS {
-        tt.add_template(status_block.name, status_block.template)
-            .unwrap();
+        tt.add_template(status_block.name, status_block.template)?;
     }
 
     let mut old_status: String = String::new();
@@ -62,9 +63,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 AtomEnum::WM_NAME,
                 AtomEnum::STRING,
                 new_status.as_bytes(),
-            )
-            .unwrap();
-            conn.flush().unwrap();
+            )?;
+            conn.flush()?;
             old_status = new_status;
         }
 
