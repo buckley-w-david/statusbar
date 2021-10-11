@@ -1,5 +1,5 @@
 [package]
-name = "block"
+name = "resource"
 version = "0.1.0"
 authors = ["David Buckley <david@davidbuckley.ca>"]
 edition = "2018"

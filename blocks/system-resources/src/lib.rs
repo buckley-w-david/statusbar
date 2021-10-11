@@ -4,7 +4,7 @@ use std::error::Error;
 
 use procstat::ProcStat;
 
-pub struct CpuBlock;
+pub struct CpuResource;
 
 // TODO replace with atomic primitives
 // https://doc.rust-lang.org/std/sync/atomic/index.html
@@ -25,8 +25,8 @@ static PREVIOUS_CPU_IDLE: AtomicU64 = AtomicU64::new(0);
 // reading and parsing it each iteration and allow each block to use the cached version.
 // This would introduce complexity when update intervals are implemented.
 
-impl block::Block for CpuBlock {
-    fn perform(&self) -> Result<String, Box<dyn Error>> {
+impl resource::Resource for CpuResource {
+    fn fetch(&self) -> Result<String, Box<dyn Error>> {
         // Do I really need a dependency just to read and parse the /proc/stat file?
         // TODO: Think about doing that myself
         let proc_stat = ProcStat::read();

@@ -3,12 +3,12 @@ use std::error::Error;
 use pulsectl::controllers::DeviceControl;
 use pulsectl::controllers::SinkController;
 
-pub struct PulseVolumeBlock {
+pub struct PulseVolumeResource {
     pub average: bool,
 }
 
-impl block::Block for PulseVolumeBlock {
-    fn perform(&self) -> Result<String, Box<dyn Error>> {
+impl resource::Resource for PulseVolumeResource {
+    fn fetch(&self) -> Result<String, Box<dyn Error>> {
         let mut handler = SinkController::create()?;
         let default = handler.get_default_device()?;
         if self.average {

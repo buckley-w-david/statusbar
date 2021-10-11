@@ -9,8 +9,8 @@ pub const ERROR: &str = "Error...";
 
 /// A block of output that will appear in the status bar
 pub struct StatusBlock<'a> {
-    /// A StatusBlock uses a Block to produce the dynamic output by calling the `perform` function
-    pub block: &'a dyn block::Block,
+    /// A StatusBlock uses a Resource to produce the dynamic output by calling the `fetch` function
+    pub resource: &'a dyn resource::Resource,
     /// A template specifies how a StatusBlock should be rendered in the bar
     /// Use {left} for the left hand separator
     /// Use {right} for the right hand separator
@@ -24,31 +24,31 @@ pub struct StatusBlock<'a> {
 /// Slice of StatusBlocks to appear in the status bar
 pub const BLOCKS: &'static [&'static StatusBlock] = &[
     &StatusBlock {
-        block: &file::FileBlock {
+        resource: &file::FileResource {
             file_path: "/home/david/.local/share/infod/mnt/rss",
         },
         template: "Articles: {content}",
         name: "rss",
     },
     &StatusBlock {
-        block: &file::FileBlock {
+        resource: &file::FileResource {
             file_path: "/home/david/.local/share/infod/mnt/pacman",
         },
         template: "Updates: {content}",
         name: "pacman",
     },
     &StatusBlock {
-        block: &system_resources::CpuBlock,
+        resource: &system_resources::CpuResource,
         template: "CPU: {content}%",
         name: "cpu",
     },
     &StatusBlock {
-        block: &volume::PulseVolumeBlock { average: true },
+        resource: &volume::PulseVolumeResource { average: true },
         template: "{content}%",
         name: "volume",
     },
     &StatusBlock {
-        block: &date::DateBlock {
+        resource: &date::DateResource {
             format: "%a %b %e %l:%M",
         },
         template: "{content}",

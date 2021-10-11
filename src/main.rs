@@ -22,7 +22,7 @@ fn build_status(blocks: &[&blocks::StatusBlock], tt: &TinyTemplate) -> String {
     blocks
         .into_iter()
         .map(|b| {
-            let content = match b.block.perform() {
+            let content = match b.resource.fetch() {
                 Ok(content) => content,
                 Err(_) => blocks::ERROR.to_string(), // TODO: logging?
             };

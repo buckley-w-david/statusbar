@@ -1,7 +1,7 @@
 [workspace]
 
 members = [
-    "block",
+    "resource",
     "cpu",
     "date",
     "file",
