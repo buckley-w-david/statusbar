@@ -15,10 +15,12 @@ The toplevel [Cargo.toml](Cargo.toml) includes all available blocks by default i
 
 ## Features
  - `date` - Current date/time with configurable format
- - `file` - Contents of a file
+ - `filesystem`
+   - Contents of a file
+   - Number of files in a directory
  - `sh` - Output of `sh -c "code"`
  - `system-resources` - Resource utilization of the system
-    - CPU Usage
+   - CPU Usage
  - `volume` - Volume of default audio device (Currently PulseAudio only)
 
 ## Adding new components
