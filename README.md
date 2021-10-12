@@ -13,6 +13,14 @@ Configuration is done via editing the [src/blocks.rs](src/blocks.rs) file and co
 
 The toplevel [Cargo.toml](Cargo.toml) includes all available blocks by default in the dependencies list, but ones not in use can be removed.
 
+## Features
+ - `date` - Current date/time with configurable format
+ - `file` - Contents of a file
+ - `sh` - Output of `sh -c "code"`
+ - `system-resources` - Resource utilization of the system
+    - CPU Usage
+ - `volume` - Volume of default audio device (Currently PulseAudio only)
+
 ## Adding new components
 
 1. Add a new lib crate to the [components](components) directory.

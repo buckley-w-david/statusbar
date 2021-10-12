@@ -4,7 +4,7 @@ members = [
     "resource",
     "cpu",
     "date",
-    "file",
+    "filesystem",
     "volume",
     "sh",
     "system-resources",

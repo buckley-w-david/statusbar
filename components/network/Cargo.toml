@@ -1,12 +1,8 @@
 [package]
-name = "sh"
+name = "network"
 version = "0.1.0"
-authors = ["David Buckley <david@davidbuckley.ca>"]
 edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-resource = { path = "../resource" }
-async-trait = "0.1.51"
-async-process = "1.2.0"

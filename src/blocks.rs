@@ -29,7 +29,7 @@ pub struct StatusBlock<'a> {
 /// Slice of StatusBlocks to appear in the status bar
 pub const BLOCKS: &[&StatusBlock] = &[
     &StatusBlock {
-        resource: &file::FileResource {
+        resource: &filesystem::FileResource {
             file_path: "/home/david/.local/share/infod/mnt/rss",
         },
         template: "Articles: {content} | ",
@@ -37,7 +37,7 @@ pub const BLOCKS: &[&StatusBlock] = &[
         interval: Duration::from_millis(1000),
     },
     &StatusBlock {
-        resource: &file::FileResource {
+        resource: &filesystem::FileResource {
             file_path: "/home/david/.local/share/infod/mnt/pacman",
         },
         template: "Updates: {content};",
@@ -46,7 +46,7 @@ pub const BLOCKS: &[&StatusBlock] = &[
     },
     &StatusBlock {
         resource: &system_resources::CpuResource,
-        template: "CPU: {content}% | ",
+        template: "Cpu: {content}% | ",
         name: "cpu",
         interval: Duration::from_millis(1000),
     },

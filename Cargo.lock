@@ -67,17 +67,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "async-net"
-version = "1.6.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5373304df79b9b4395068fb080369ec7178608827306ce4d081cba51cac551df"
-dependencies = [
- "async-io",
- "blocking",
- "futures-lite",
-]
-
-[[package]]
 name = "async-process"
 version = "1.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -208,10 +197,12 @@ dependencies = [
 ]
 
 [[package]]
-name = "file"
+name = "filesystem"
 version = "0.1.0"
 dependencies = [
+ "async-fs",
  "async-trait",
+ "futures-lite",
  "resource",
 ]
 
@@ -326,18 +317,6 @@ dependencies = [
 
 [[package]]
 name = "nix"
-version = "0.19.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b2ccba0cfe4fdf15982d1674c69b1fd80bad427d293849982668dfe454bd61f2"
-dependencies = [
- "bitflags",
- "cc",
- "cfg-if",
- "libc",
-]
-
-[[package]]
-name = "nix"
 version = "0.22.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d3bb9a13fa32bc5aeb64150cd3f32d6cf4c748f8f8a417cce5d2eb976a8370ba"
@@ -426,12 +405,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "procstat"
-version = "1.0.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4a2fc89593746e7fd101d9e1173e2cacaecf344fe236660126d6f23e3a25ab44"
-
-[[package]]
 name = "pulsectl-rs"
 version = "0.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -494,6 +467,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "sh"
+version = "0.1.0"
+dependencies = [
+ "async-process",
+ "async-trait",
+ "resource",
+]
+
+[[package]]
 name = "signal-hook"
 version = "0.3.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -519,24 +501,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c307a32c1c5c437f38c7fd45d753050587732ba8628319fbdf12a7e289ccc590"
 
 [[package]]
-name = "smol"
-version = "1.2.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "85cf3b5351f3e783c1d79ab5fc604eeed8b8ae9abd36b166e8b87a089efd85e4"
-dependencies = [
- "async-channel",
- "async-executor",
- "async-fs",
- "async-io",
- "async-lock",
- "async-net",
- "async-process",
- "blocking",
- "futures-lite",
- "once_cell",
-]
-
-[[package]]
 name = "socket2"
 version = "0.4.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -550,14 +514,16 @@ dependencies = [
 name = "statusbar"
 version = "0.1.0"
 dependencies = [
+ "async-channel",
+ "async-executor",
+ "async-io",
  "date",
- "file",
- "nix 0.19.1",
+ "filesystem",
+ "futures-lite",
  "resource",
  "serde",
- "smol",
+ "sh",
  "system-resources",
- "timerfd",
  "tinytemplate",
  "volume",
  "x11rb",
@@ -578,8 +544,10 @@ dependencies = [
 name = "system-resources"
 version = "0.1.0"
 dependencies = [
+ "async-fs",
+ "async-io",
  "async-trait",
- "procstat",
+ "futures-lite",
  "resource",
 ]
 
@@ -592,15 +560,6 @@ dependencies = [
  "libc",
  "wasi",
  "winapi",
-]
-
-[[package]]
-name = "timerfd"
-version = "1.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0bb53e6628675d73224925201a9a41f01c8d31108fdccb983975a1c1449dfc91"
-dependencies = [
- "libc",
 ]
 
 [[package]]
@@ -687,7 +646,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6e99be55648b3ae2a52342f9a870c0e138709a3493261ce9b469afe6e4df6d8a"
 dependencies = [
  "gethostname",
- "nix 0.22.2",
+ "nix",
  "winapi",
  "winapi-wsapoll",
 ]
