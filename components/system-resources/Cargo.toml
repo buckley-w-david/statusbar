@@ -9,3 +9,4 @@ edition = "2018"
 [dependencies]
 resource = { path = "../resource" }
 procstat = "1.0.4"
+async-trait = "0.1.51"

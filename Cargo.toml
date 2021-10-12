@@ -8,6 +8,9 @@ edition = "2018"
 x11rb = "0.9.0"
 tinytemplate = "1.1"
 serde = { version = "1.0", features = ["derive"] }
+smol = "1.2.5"
+timerfd = "1.2.0"
+nix = "0.19.1"
 
 resource = { path = "components/resource" }
 system-resources = { path = "components/system-resources" }

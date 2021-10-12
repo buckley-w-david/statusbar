@@ -4,13 +4,9 @@ pub const LEFT: &str = "[";
 /// right hand block separator
 pub const RIGHT: &str = "]";
 /// Element used to join blocks
-pub const SEPARATOR: &str = " | ";
+pub const SEPARATOR: &str = "";
 /// Element used when a block fails
 pub const ERROR: &str = "Error...";
-/// Duration between updates
-/// statusbar will attempt to compensate for slow update loops by sleeping for a smaller duration
-/// based on how long an update actually took
-pub const INTERVAL: Duration = Duration::from_millis(1000);
 
 /// A block of output that will appear in the status bar
 pub struct StatusBlock<'a> {
@@ -24,6 +20,10 @@ pub struct StatusBlock<'a> {
     /// The block name
     /// Each StatusBlock must be given a unique name within BLOCKS for templating to work correctly
     pub name: &'a str,
+    /// Duration between updates
+    /// statusbar will attempt to compensate for slow update loops by sleeping for a smaller duration
+    /// based on how long an update actually took
+    pub interval: Duration,
 }
 
 /// Slice of StatusBlocks to appear in the status bar
@@ -32,25 +32,29 @@ pub const BLOCKS: &[&StatusBlock] = &[
         resource: &file::FileResource {
             file_path: "/home/david/.local/share/infod/mnt/rss",
         },
-        template: "Articles: {content}",
+        template: "Articles: {content} | ",
         name: "rss",
+        interval: Duration::from_millis(1000),
     },
     &StatusBlock {
         resource: &file::FileResource {
             file_path: "/home/david/.local/share/infod/mnt/pacman",
         },
-        template: "Updates: {content}",
+        template: "Updates: {content};",
         name: "pacman",
+        interval: Duration::from_millis(1000),
     },
     &StatusBlock {
         resource: &system_resources::CpuResource,
-        template: "CPU: {content}%",
+        template: "CPU: {content}% | ",
         name: "cpu",
+        interval: Duration::from_millis(1000),
     },
     &StatusBlock {
         resource: &volume::PulseVolumeResource { average: true },
-        template: "{content}%",
+        template: "{content}% | ",
         name: "volume",
+        interval: Duration::from_millis(1000),
     },
     &StatusBlock {
         resource: &date::DateResource {
@@ -58,5 +62,6 @@ pub const BLOCKS: &[&StatusBlock] = &[
         },
         template: "{content}",
         name: "date",
+        interval: Duration::from_millis(1000),
     },
 ];

@@ -1,5 +1,7 @@
 use std::error::Error;
 
+use async_trait::async_trait;
+
 use pulsectl::controllers::DeviceControl;
 use pulsectl::controllers::SinkController;
 
@@ -7,8 +9,9 @@ pub struct PulseVolumeResource {
     pub average: bool,
 }
 
+#[async_trait]
 impl resource::Resource for PulseVolumeResource {
-    fn fetch(&self) -> Result<String, Box<dyn Error>> {
+    async fn fetch(&self) -> Result<String, Box<dyn Error>> {
         let mut handler = SinkController::create()?;
         let default = handler.get_default_device()?;
         if self.average {

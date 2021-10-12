@@ -8,3 +8,4 @@ edition = "2018"
 
 [dependencies]
 resource = { path = "../resource" }
+async-trait = "0.1.51"

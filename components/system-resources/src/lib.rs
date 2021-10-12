@@ -2,6 +2,8 @@ use std::error::Error;
 use std::fmt;
 use std::sync::atomic::{AtomicU64, Ordering};
 
+use async_trait::async_trait;
+
 use procstat::ProcStat;
 
 pub struct CpuResource;
@@ -32,8 +34,9 @@ static PREVIOUS_CPU: [AtomicU64; 7] = [
 // reading and parsing it each iteration and allow each block to use the cached version.
 // This would introduce complexity when update intervals are implemented.
 
+#[async_trait]
 impl resource::Resource for CpuResource {
-    fn fetch(&self) -> Result<String, Box<dyn Error>> {
+    async fn fetch(&self) -> Result<String, Box<dyn Error>> {
         // Do I really need a dependency just to read and parse the /proc/stat file?
         // TODO: Think about doing that myself
         let proc_stat = ProcStat::read();

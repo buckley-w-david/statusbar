@@ -9,3 +9,4 @@ edition = "2018"
 [dependencies]
 resource = { path = "../resource" }
 pulsectl-rs = "0.3.2"
+async-trait = "0.1.51"
