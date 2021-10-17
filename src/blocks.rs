@@ -1,4 +1,7 @@
 use std::time::Duration;
+
+use crate::signal;
+
 /// Left hand block separator
 pub const LEFT: &str = "[";
 /// right hand block separator
@@ -24,6 +27,7 @@ pub struct StatusBlock<'a> {
     /// statusbar will attempt to compensate for slow update loops by sleeping for a smaller duration
     /// based on how long an update actually took
     pub interval: Duration,
+    pub signal_handler: &'a dyn signal::SignalHandler,
 }
 
 /// Slice of StatusBlocks to appear in the status bar
@@ -35,6 +39,9 @@ pub const BLOCKS: &[&StatusBlock] = &[
         template: "Articles: {content} | ",
         name: "rss",
         interval: Duration::from_millis(1000),
+        signal_handler: &signal::ShHandler {
+            code: "kitty newsboat",
+        },
     },
     &StatusBlock {
         resource: &filesystem::FileResource {
@@ -43,18 +50,37 @@ pub const BLOCKS: &[&StatusBlock] = &[
         template: "Updates: {content};",
         name: "pacman",
         interval: Duration::from_millis(1000),
+        signal_handler: &signal::NoOpHandler,
     },
     &StatusBlock {
         resource: &system_resources::CpuResource,
         template: "Cpu: {content}% | ",
         name: "cpu",
         interval: Duration::from_millis(1000),
+        signal_handler: &signal::ShHandler { code: "kitty htop" },
+    },
+    &StatusBlock {
+        resource: &no_resource::NoResource,
+        template: "-",
+        name: "volume-down",
+        interval: Duration::from_secs(86400),
+        signal_handler: &signal::ShHandler {
+            code: "vol-ctl down",
+        },
     },
     &StatusBlock {
         resource: &volume::PulseVolumeResource { average: true },
-        template: "{content}% | ",
+        template: " {content}% ",
         name: "volume",
         interval: Duration::from_millis(1000),
+        signal_handler: &signal::NoOpHandler,
+    },
+    &StatusBlock {
+        resource: &no_resource::NoResource,
+        template: "+ | ",
+        name: "volume-up",
+        interval: Duration::from_secs(86400),
+        signal_handler: &signal::ShHandler { code: "vol-ctl up" },
     },
     &StatusBlock {
         resource: &date::DateResource {
@@ -63,5 +89,6 @@ pub const BLOCKS: &[&StatusBlock] = &[
         template: "{content}",
         name: "date",
         interval: Duration::from_millis(1000),
+        signal_handler: &signal::ShHandler { code: "gsimplecal" },
     },
 ];

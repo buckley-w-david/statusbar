@@ -1,7 +1,6 @@
 [package]
-name = "system-resources"
+name = "no-resource"
 version = "0.1.0"
-authors = ["David Buckley <david@davidbuckley.ca>"]
 edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -9,7 +8,3 @@ edition = "2018"
 [dependencies]
 resource = { path = "../resource" }
 async-trait = "0.1.51"
-async-io = "1.6.0"
-async-fs = "1.5.0"
-futures-lite = "1.12.0"
-systemstat = "0.1.8"

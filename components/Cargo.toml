@@ -2,10 +2,10 @@
 
 members = [
     "resource",
-    "cpu",
     "date",
     "filesystem",
     "volume",
     "sh",
     "system-resources",
+    "no-resource",
 ]

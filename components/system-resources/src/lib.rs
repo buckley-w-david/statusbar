@@ -5,6 +5,8 @@ use std::sync::atomic::{AtomicU64, Ordering};
 use std::num::ParseIntError;
 use futures_lite::io::{BufReader, AsyncBufReadExt};
 
+use systemstat::{System, Platform};
+
 use async_fs::File;
 use async_trait::async_trait;
 
@@ -111,4 +113,13 @@ impl resource::Resource for CpuResource {
     }
 }
 
-// TODO: Other system-resource type measures like memory
+pub struct LoadAverageResource;
+
+#[async_trait]
+impl resource::Resource for LoadAverageResource {
+    async fn fetch(&self) -> Result<String, Box<dyn Error>> {
+        let sys = System::new();
+        let avg = sys.load_average()?;
+        Ok(format!("{} {} {}", avg.one, avg.five, avg.fifteen))
+    }
+}
