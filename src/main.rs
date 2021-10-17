@@ -5,6 +5,7 @@ use std::cmp;
 use std::time::Instant;
 use std::thread;
 use std::panic::catch_unwind;
+use std::sync::Arc;
 
 use async_channel::bounded;
 use async_executor::Executor;
@@ -56,8 +57,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut tt = TinyTemplate::new();
     let mut buffers: Vec<(&str, String)> = Vec::new();
 
-    let ex = Executor::new();
-
+    let ex = Arc::new(Executor::new());
     for (i, &status_block) in blocks::BLOCKS.iter().enumerate() {
         tt.add_template(status_block.name, status_block.template)?;
         buffers.push((status_block.name, String::new()));
@@ -85,15 +85,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         }).detach();
     }
 
-    thread::Builder::new()
-        .spawn(move || {
-            loop {
-                catch_unwind(|| async_io::block_on(ex.run(future::pending::<()>()))).ok();
-            }
-        })
-        .expect("cannot spawn executor thread");
 
-
+    let ex1 = ex.clone();
     thread::Builder::new()
         .spawn(move || {
             let (sigmin, sigmax) = (SIGRTMIN(), SIGRTMAX());
@@ -102,22 +95,27 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 let mut signals = signal_hook::iterator::Signals::new(&signals).unwrap(); // FIXME: unwrap
                 for sig in signals.forever() {
                     let i = sig - sigmin;
-                    // Signal events are expected to 
-                    //   1. happen infrequently
-                    //   2. have a (reasonably) long delay between invocations
-                    //   3. be handled pretty quick
-                    // Therefor one thread that is dedicated to handling each one synchronously
-                    // shouldn't really cause a problem since by the time the user has clicked
-                    // again the last signal should have long been finished
-                    // If this turns out to not be the case, each one can be spun off in a new
-                    // thread. 
-                    // Attempting to store function pointers to async functions in a
-                    // constant slice of structs is a fucking mess. Don't try.
-                    (blocks::BLOCKS[i as usize].signal_handler).signal(i).unwrap(); // FIXME: unwrap
+                    ex1.spawn(async move {
+                        blocks::BLOCKS[i as usize]
+                            .signal_handler
+                            .signal(i)
+                            .await
+                            .unwrap(); // FIXME: unwrap
+                    }).detach();
                 }
             }
         })
         .expect("cannot spawn signal handler thread");
+
+
+    thread::Builder::new()
+        .spawn(move || {
+            loop {
+                catch_unwind(|| async_io::block_on(ex.run(future::pending::<()>()))).ok();
+            }
+        })
+        .expect("cannot spawn executor thread");
+
 
     async_io::block_on(async {
         let mut old_status: String = String::new();

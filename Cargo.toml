@@ -11,9 +11,12 @@ serde = { version = "1.0", features = ["derive"] }
 async-channel = "1.6.1"
 async-executor = "1.4.1"
 async-io = "1.6.0"
+async-trait = "0.1.51"
 futures-lite = "1.12.0"
 libc = "0.2"
 signal-hook = "0.3.10"
+async-process = "1.2.0"
+
 
 resource = { path = "components/resource" }
 system-resources = { path = "components/system-resources" }

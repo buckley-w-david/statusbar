@@ -1,15 +1,18 @@
 use std::error::Error;
-use std::process::Command;
-use std::thread;
 
+use async_process::Command;
+use async_trait::async_trait;
+
+#[async_trait]
 pub trait SignalHandler: Sync {
-    fn signal(&'static self, sig: i32) -> Result<(), Box<dyn Error>>;
+    async fn signal(&self, sig: i32) -> Result<(), Box<dyn Error>>;
 }
 
 pub struct NoOpHandler;
 
+#[async_trait]
 impl SignalHandler for NoOpHandler {
-    fn signal(&self, _sig: i32) -> Result<(), Box<dyn Error>> {
+    async fn signal(&self, _sig: i32) -> Result<(), Box<dyn Error>> {
         println!("no-op handler!");
         Ok(())
     }
@@ -19,19 +22,15 @@ pub struct ShHandler<'a> {
     pub code: &'a str,
 }
 
-impl SignalHandler for ShHandler<'static> {
-    fn signal(&'static self, _sig: i32) -> Result<(), Box<dyn Error>> {
-        println!("sh handler!");
-        thread::Builder::new()
-            .spawn(move || {
-                let mut c = Command::new("sh")
-                    .arg("-c")
-                    .arg(self.code)
-                    .spawn()
-                    .expect("failed to execute sh handler");
-                c.wait().expect("failed to wait for process");
-            })
-            .expect("cannot spawn executor thread");
+#[async_trait]
+impl SignalHandler for ShHandler<'_> {
+    async fn signal(&self, _sig: i32) -> Result<(), Box<dyn Error>> {
+        Command::new("sh")
+            .arg("-c")
+            .arg(self.code)
+            .spawn()?
+            .status()
+            .await?;
 
         Ok(())
     }

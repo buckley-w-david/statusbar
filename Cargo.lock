@@ -599,6 +599,8 @@ dependencies = [
  "async-channel",
  "async-executor",
  "async-io",
+ "async-process",
+ "async-trait",
  "date",
  "filesystem",
  "futures-lite",
