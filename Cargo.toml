@@ -25,3 +25,4 @@ filesystem = { path = "components/filesystem" }
 volume = { path = "components/volume" }
 sh = { path = "components/sh" }
 no-resource = { path = "components/no-resource" }
+keyboard-indicators = { path = "components/keyboard-indicators" }

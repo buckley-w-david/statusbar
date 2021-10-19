@@ -53,6 +53,24 @@ pub const BLOCKS: &[&StatusBlock] = &[
         signal_handler: &signal::NoOpHandler,
     },
     &StatusBlock {
+        resource: &keyboard_indicators::KeyboardIndicatorResource {
+            caps_lock: keyboard_indicators::KeyIndicator {
+                on: true,
+                toggle: true,
+                key: "C",
+            },
+            num_lock: keyboard_indicators::KeyIndicator {
+                on: false,
+                toggle: true,
+                key: "n",
+            },
+        },
+        template: "KB: {content} | ",
+        name: "kb",
+        interval: Duration::from_millis(1000),
+        signal_handler: &signal::NoOpHandler,
+    },
+    &StatusBlock {
         resource: &system_resources::CpuResource,
         template: "Cpu: {content}% | ",
         name: "cpu",

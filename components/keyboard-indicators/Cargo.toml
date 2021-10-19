@@ -1,0 +1,11 @@
+[package]
+name = "keyboard-indicators"
+version = "0.1.0"
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+resource = { path = "../resource" }
+async-trait = "0.1.51"
+x11rb = "0.9.0"

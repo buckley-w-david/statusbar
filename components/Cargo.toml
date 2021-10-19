@@ -8,4 +8,5 @@ members = [
     "sh",
     "system-resources",
     "no-resource",
+    "keyboard-indicators",
 ]
