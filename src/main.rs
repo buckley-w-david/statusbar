@@ -116,7 +116,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         })
         .expect("cannot spawn executor thread");
 
-
     async_io::block_on(async {
         let mut old_status: String = String::new();
         loop {

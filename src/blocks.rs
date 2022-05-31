@@ -53,29 +53,20 @@ pub const BLOCKS: &[&StatusBlock] = &[
         signal_handler: &signal::NoOpHandler,
     },
     &StatusBlock {
-        resource: &keyboard_indicators::KeyboardIndicatorResource {
-            caps_lock: keyboard_indicators::KeyIndicator {
-                on: true,
-                toggle: true,
-                key: "C",
-            },
-            num_lock: keyboard_indicators::KeyIndicator {
-                on: false,
-                toggle: true,
-                key: "n",
-            },
-        },
-        template: "KB: {content} | ",
-        name: "kb",
-        interval: Duration::from_millis(1000),
-        signal_handler: &signal::NoOpHandler,
-    },
-    &StatusBlock {
         resource: &system_resources::CpuResource,
         template: "Cpu: {content}% | ",
         name: "cpu",
         interval: Duration::from_millis(1000),
         signal_handler: &signal::ShHandler { code: "kitty htop" },
+    },
+    &StatusBlock {
+        resource: &system_resources::CpuTemperatureResource {
+            input_path: Some("/sys/class/hwmon/hwmon1/temp1_input")
+        },
+        template: "Temp: {content}°C | ",
+        name: "temp",
+        interval: Duration::from_millis(1000),
+        signal_handler: &signal::ShHandler { code: "hardinfo" },
     },
     &StatusBlock {
         resource: &no_resource::NoResource,

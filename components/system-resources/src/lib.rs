@@ -123,3 +123,21 @@ impl resource::Resource for LoadAverageResource {
         Ok(format!("{} {} {}", avg.one, avg.five, avg.fifteen))
     }
 }
+
+
+pub struct CpuTemperatureResource<'a> {
+    pub input_path: Option<&'a str>,
+}
+
+#[async_trait]
+impl resource::Resource for CpuTemperatureResource<'_> {
+    async fn fetch(&self) -> Result<String, Box<dyn Error>> {
+        let p = if let Some(path) = self.input_path {
+            path
+        } else {
+            "/sys/class/hwmon/hwmon0/temp1_input"
+        };
+
+        Ok(format!("{:.2}", async_fs::read_to_string(p).await?.trim().parse::<f32>()? / 1000.0))
+    }
+}
